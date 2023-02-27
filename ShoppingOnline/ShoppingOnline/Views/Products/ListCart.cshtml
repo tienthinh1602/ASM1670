@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "ListCart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="list-cart">
+    <table class="cart">
+        <tr>
+            <th>STT</th>
+            <th>Title</th>
+            <th>Image</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total Price</th>            
+            <th>Delete</th>
+        </tr>
+            @{
+                int STT = 0;
+                decimal thanhtien = 0;
+                foreach (var item in ViewBag.carts)
+                {                    
+                    STT++;                    
+                decimal total = item.Product.Price * item.Quantity;
+                thanhtien += total;                
+                <tr>
+                    <td>@STT</td>
+                    <td>@item.Product.Name</td>
+                    <td><img src="@item.Product.ImageUrl" width="100" height="100" /></td>
+                    <td class="text-center">
+                    <a class="btn btn-default" asp-controller="Products"
+                    asp-action="decreaseQuantity" asp-route-id="@item.Product.Id"><b>-   </b</a>                      
+                    <a>    @item.Quantity</a>          
+                    <a class="btn btn-default" asp-controller="Products"
+                    asp-action="increaseQuantity" asp-route-id="@item.Product.Id"><b>+</b></a>
+                    </td>
+                    
+                    <td>@item.Product.Price</td>
+                    <td>@total</td>   
+                    <td><a asp-controller="Products" asp-action="deleteCart" asp-route-id="@item.Product.Id" class="btn btn-danger">Delete</a></td>
+                </tr>
+            }
+            <tr>
+          <td colspan="6" class="text-right">Total price</td>
+          <td>$@(thanhtien.ToString("n0"))</td>          
+      </tr>            
+    }
+    </table>
+    <a asp-controller="Products" asp-action="Index" class="btn btn-secondary mt-3">Continue Shopping</a>
+    <a asp-controller="Products" asp-action="Checkout" class="btn btn-primary mt-3">Checkout</a>                  
+</div>
+
+<style>
+.list-cart {
+margin: 20px;
+padding: 20px;
+border: 1px solid #ccc;
+}
+
+.cart {
+width: 100%;
+}
+
+.cart th {
+background-color: #f2f2f2;
+font-weight: bold;
+text-align: center;
+padding: 10px;
+border: 1px solid #ccc;
+}
+
+.cart td {
+text-align: center;
+padding: 10px;
+border: 1px solid #ccc;
+}
+
+.cart img {
+max-width: 100%;
+height: auto;
+}
+
+.cart .text-center {
+text-align: center;
+}
+
+.cart .btn {
+display: inline-block;
+margin: 0 5px;
+}
+
+
+.cart .btn-danger:hover {
+background-color: #c82333;
+}
+
+
+
+.cart .btn-secondary:hover {
+background-color: #5a6268;
+}
+
+
+.cart .btn-primary:hover {
+background-color: #0069d9;
+}
+</style>
+
+
+
+
+
+
