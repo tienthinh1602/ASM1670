@@ -68,6 +68,7 @@ namespace ShoppingOnline.Controllers
             ViewData["GenreId"] = new SelectList(_context.Set<Genre>(), "Id", "Name", product.GenreId);
             return View(product);
         }
+
 		[Authorize(Roles = "Admin")]
 		// GET: Products/Edit/5
 		public async Task<IActionResult> Edit(int? id)

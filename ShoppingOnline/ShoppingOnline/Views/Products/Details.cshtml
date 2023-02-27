@@ -1,7 +1,13 @@
-﻿@model ShoppingOnline.Models.Product
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@model ShoppingOnline.Models.Product
 
 @{
     ViewData["Title"] = "Details";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isAdmin = await UserManager.IsInRoleAsync(currentUser, "Admin");
 }
 <style>
     .product-details {
@@ -39,12 +45,14 @@
         margin-top: 20px;
     }
 
+
     kground-color: #6c757d;
 }
 </style>
 
 <h1>Details</h1>
-
+@if(isAdmin)
+{
 <div class="product-details">
     <div class="product-image">
         <img src="@Model.ImageUrl" alt="@Model.Name" />
@@ -64,4 +72,25 @@
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">Edit</a>
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>
+}
+else
+{
+    <div class="product-details">
+        <div class="product-image">
+            <img src="@Model.ImageUrl" alt="@Model.Name" />
+        </div>
+        <div class="product-info">
+            <h2>@Model.Name</h2>
+            <p>@Model.Description</p>
+            <p class="product-price">Price: $@Model.Price</p>
+            <p class="product-quantity">Quantity: @Model.Quantity</p>
+            <p class="product-genre">Genre: @Model.Genre.Name</p>
+            <a asp-action="addCart" asp-route-id="@Model.Id" class="btn btn-primary">Add to cart</a>
 
+        </div>
+    </div>
+
+    <div class="product-actions">       
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+  }

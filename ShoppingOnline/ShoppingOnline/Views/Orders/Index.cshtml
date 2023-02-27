@@ -1,0 +1,133 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@model IEnumerable<ShoppingOnline.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isAdmin = await UserManager.IsInRoleAsync(currentUser, "Admin");
+}
+<h1>Order</h1>
+@if (isAdmin)
+{
+    
+
+    <div class="list-cart">
+        <table class="cart">
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th></th>
+            </tr>
+            @{
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.FirstName @item.LastName
+                        </td>            
+                        <td>
+                            @item.AddressLine
+                        </td>
+                                 
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                        
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+}
+else
+{
+
+        <div class="list-cart">
+            <table class="cart">
+                <tr>
+                    <th>Name</th>
+                    <th>Address 1</th>
+                    <th>Address 2</th>       
+                    <th></th>
+                </tr>
+            @{
+                foreach (var item in Model)
+                {
+                                <tr>
+                                    <td>
+                            @item.FirstName+ @item.LastName
+                                    </td>            
+                                    <td>
+                            @item.AddressLine
+                                    </td>
+                                      
+                           <td>
+
+                        
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
+                            
+                           </td>
+                           </tr>
+                }
+            }
+            </table>
+        </div>
+}
+
+<style>
+
+.list-cart {
+margin: 20px;
+padding: 20px;
+border: 1px solid #ccc;
+}
+
+.cart {
+width: 100%;
+}
+
+.cart th {
+background-color: #f2f2f2;
+font-weight: bold;
+text-align: center;
+padding: 10px;
+border: 1px solid #ccc;
+}
+
+.cart td {
+text-align: center;
+padding: 10px;
+border: 1px solid #ccc;
+}
+
+.cart img {
+max-width: 100%;
+height: auto;
+}
+
+.cart .text-center {
+text-align: center;
+}
+
+.cart .btn {
+display: inline-block;
+margin: 0 5px;
+}
+
+
+.cart .btn-danger:hover {
+background-color: #c82333;
+}
+.cart .btn-secondary:hover {
+background-color: #5a6268;
+}
+
+
+.cart .btn-primary:hover {
+background-color: #0069d9;
+}
+</style>

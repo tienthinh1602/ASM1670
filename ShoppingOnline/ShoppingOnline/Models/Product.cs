@@ -24,6 +24,6 @@ namespace ShoppingOnline.Models
         public string ImageUrl { get; set; }
 
         public int GenreId { get; set; }
-        public Genre Genre { get; set; }
+        public Genre? Genre { get; set; }
     }
 }
