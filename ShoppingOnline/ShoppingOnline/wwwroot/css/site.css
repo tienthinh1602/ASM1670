@@ -16,3 +16,136 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    width: 100%;
+    height: 100%;
+}
+
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    }
+
+.card-img-top {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    margin-bottom: 10px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn {
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+.btnQty {
+    border: none;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    
+}
+
+.btn:hover {
+    color: #fff;
+    background-color: #000;
+}
+
+.product-details {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.product-image {
+    flex: 0 0 300px;
+    margin-right: 20px;
+}
+
+.product-info {
+    flex: 1;
+}
+
+    .product-info h2 {
+        margin-top: 0;
+    }
+
+.product-price {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.product-quantity {
+    margin-bottom: 5px;
+}
+
+.product-genre {
+    margin-bottom: 20px;
+}
+
+.add-to-cart {
+    margin-top: 20px;
+}
+
+.list-cart {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+
+.cart {
+    width: 100%;
+}
+
+    .cart th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+
+    .cart td {
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+
+    .cart img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .cart .text-center {
+        text-align: center;
+    }
+
+    .cart .btn {
+        display: inline-block;
+        margin: 0 5px;
+    }

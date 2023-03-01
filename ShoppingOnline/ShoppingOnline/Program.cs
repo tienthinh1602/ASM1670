@@ -1,22 +1,30 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShoppingOnline.Data;
+using ShoppingOnline.Models;
 
 
-var builder = WebApplication.CreateBuilder(args);
+
+    var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultUI()
+        .AddDefaultTokenProviders();
+
+
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddMvc();
+
 //Set Session Timeout. Default is 20 minutes.
 builder.Services.AddSession(options =>
 {

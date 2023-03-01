@@ -1,61 +1,75 @@
-﻿@model ShoppingOnline.Models.Order
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@model ShoppingOnline.Models.Order
 
 @{
     ViewData["Title"] = "Details";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isAdmin = await UserManager.IsInRoleAsync(currentUser, "Admin");
+
 }
 
-<h1>Details</h1>
 
-<div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AddressLine)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AddressLine)
-        </dd>
-       
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ZipCode)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ZipCode)
-        </dd>        
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning mt-3">Edit</a> 
-    <a asp-action="Index" class="btn btn-secondary mt-3">Back to List</a>
-</div>
+@if(isAdmin)
+{
+    <div>
+        <h4>Order Detail</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">Book:</dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Product.Name)
+            </dd>
+            <dt class="col-sm-2">Price:</dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Price)
+            </dd>
+            <dt class="col-sm-2">Quantity:</dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Qty)
+            </dd>            
+            <dt class="col-sm-2">Order Time:</dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OrderTime)
+            </dd>
+            <dt class="col-sm-2">UserID:</dt>                     
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.UserId)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Index" class="btn">Back to List</a>
+    </div>
+}
+else
+{
+    
+        <div>
+            <h4>Order Detail</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2">Book:</dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Product.Name)
+                </dd>
+                <dt class="col-sm-2">Price:</dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Price)
+                </dd>
+                <dt class="col-sm-2">Quantity:</dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Qty)
+                </dd>
+                <dt class="col-sm-2">Order Time:</dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.OrderTime)
+                </dd>               
+            </dl>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn">Back to List</a>
+        </div>
+  }

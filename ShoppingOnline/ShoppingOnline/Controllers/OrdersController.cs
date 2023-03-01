@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +20,23 @@ namespace ShoppingOnline.Controllers
         {
             _context = context;
         }
-
+        [Authorize]
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Orders.ToListAsync());
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var orders = _context.Orders.Where(o => o.UserId == userId);
+
+            if (User.IsInRole("Admin"))
+            {
+                orders = _context.Orders;
+            }
+
+            var applicationDbContext = orders.Include(o => o.Product);
+
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Orders/Details/5
@@ -34,6 +48,7 @@ namespace ShoppingOnline.Controllers
             }
 
             var order = await _context.Orders
+                .Include(o => o.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
@@ -42,57 +57,7 @@ namespace ShoppingOnline.Controllers
 
             return View(order);
         }
-       
-
-        // GET: Orders/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Orders == null)
-            {
-                return NotFound();
-            }
-
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-            return View(order);
-        }
-
-        // POST: Orders/Edit/5  
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,AddressLine1,AddressLine2,ZipCode,City,State,Country,PhoneNumber,Email,UserId")] Order order)
-        {
-            if (id != order.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OrderExists(order.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(order);
-        }
-
+        
         // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -102,6 +67,7 @@ namespace ShoppingOnline.Controllers
             }
 
             var order = await _context.Orders
+                .Include(o => o.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +17,12 @@ namespace ShoppingOnline.Controllers
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ProductsController(ApplicationDbContext context)
+        public ProductsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager)); ;
         }
 
         // GET: Products
@@ -171,9 +175,9 @@ namespace ShoppingOnline.Controllers
             return product;
         }
 
-		[Authorize]
-		//ADD CART
-		public IActionResult addCart(int id)
+        [Authorize]
+        //ADD CART
+        public IActionResult addCart(int id)
         {
             var cart = HttpContext.Session.GetString("cart");//get key cart
             if (cart == null)
@@ -288,74 +292,44 @@ namespace ShoppingOnline.Controllers
             return RedirectToAction(nameof(ListCart));
         }
 
-        // GET: Products/Checkout
-        public IActionResult Checkout()
+        public async Task<ActionResult> CheckOut()
         {
-            var cart = HttpContext.Session.GetString("cart");//get key cart
-            if (cart != null)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                List<Cart> dataCart = JsonConvert.DeserializeObject<List<Cart>>(cart);
-                if (dataCart.Count > 0)
-                {
-                    ViewBag.carts = dataCart;
-                    return View(new Order());
-                }
+                return RedirectToPage("./Login");
             }
-            return RedirectToAction(nameof(Index));
-        }
-
-        // POST: Products/Checkout
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Checkout(Order order)
-        {
             if (ModelState.IsValid)
             {
-                // Save the order to the database
-                order.OrderDate = DateTime.UtcNow;
-                order.OrderTotal = 0;
-                order.OrderItems = new List<OrderItem>();
                 var cart = HttpContext.Session.GetString("cart");
-                var dataCart = JsonConvert.DeserializeObject<List<Cart>>(cart);
-
-                foreach (var cartItem in dataCart)
+                if (cart != null)
                 {
-                    var product = _context.Products.Find(cartItem.Product.Id);
-                    if (product != null)
+                    List<Cart> dataCart = JsonConvert.DeserializeObject<List<Cart>>(cart);
+                    for (int i = 0; i < dataCart.Count; i++)
                     {
-                        var orderItem = new OrderItem
+                        Order order = new Order()
                         {
-                            Product = product,
-                            Quantity = cartItem.Quantity,
-                            Price = product.Price
+                            UserId = _userManager.GetUserId(User),
+                            ProductId = dataCart[i].Product.Id,
+                            Qty = dataCart[i].Quantity,
+                            Price = Convert.ToDouble(dataCart[i].Quantity * dataCart[i].Product.Price),
+                            OrderTime = DateTime.Now
                         };
-                        order.OrderTotal += orderItem.Quantity * orderItem.Price;
-                        order.OrderItems.Add(orderItem);
+                        _context.Orders.Add(order);
+                        _context.SaveChanges();
+                        deleteCart(dataCart[i].Product.Id);
                     }
+
                 }
-
-                _context.Orders.Add(order);
-                await _context.SaveChangesAsync();
-
-                // Clear the cart
-                HttpContext.Session.Remove("cart");
-
-                // Redirect to the confirmation page
-                return RedirectToAction(nameof(CheckoutConfirmation), new { orderId = order.Id });
-            }
-
-            return View(order);
-        }
-
-        // GET: Products/CheckoutConfirmation/5
-        public IActionResult CheckoutConfirmation(int orderId)
-        {
-            var order = _context.Orders.Include(o => o.OrderItems).ThenInclude(oi => oi.Product).FirstOrDefault(o => o.Id == orderId);
-            if (order != null)
-            {
-                return View(order);
+                return RedirectToAction(nameof(ThankYou));
             }
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult ThankYou()
+        {
+            return View();
+        }
+
     }
 }

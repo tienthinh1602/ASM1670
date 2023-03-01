@@ -1,0 +1,15 @@
+﻿@model ShoppingOnline.Models.Order
+
+@{
+    ViewData["Title"] = "Thank You";
+}
+
+<h2>Thank You for Your Order!</h2>
+
+<p>Your order has been successfully processed.</p>
+
+<div>
+    <a asp-controller="Orders" asp-action="Index" class="btn">View all order</a>
+    <a asp-action="Index" class="btn">Continue Shopping</a>
+</div>
+

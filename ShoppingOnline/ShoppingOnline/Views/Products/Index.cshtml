@@ -6,100 +6,39 @@
 
 @{
     ViewData["Title"] = "Index";
-    var currentUser = await UserManager.GetUserAsync(User);
-    var isAdmin = await UserManager.IsInRoleAsync(currentUser, "Admin");
+    Layout = "~/Views/Shared/_Layout.cshtml";   
 }
-
-<style>
-    .card {
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-        transition: 0.3s;
-        width: 100%;
-        height: 100%;
-    }
-
-        .card:hover {
-            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-        }
-
-    .card-img-top {
-        width: 100%;
-        height: 500px;
-        object-fit: cover;
-    }
-
-    .card-body {
-        padding: 20px;
-    }
-
-    .card-title {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-
-    .card-text {
-        margin-bottom: 10px;
-    }
-
-    .button-group {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-    }
-</style>
-
 <h1>Book Store</h1>
-@if(isAdmin)
-{
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Create New</a>
-    </p>
-    <div class="row">
-        @foreach (var item in Model)
-        {
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <img class="card-img-top" src="@item.ImageUrl" alt="@item.Name">
-                    <div class="card-body">
-                        <h5 class="card-title">@item.Name</h5>
-                        <p class="card-text">Price: $@item.Price</p>
-                        <p class="card-text">Quantity: @item.Quantity</p>
-                        <p class="card-text">Genre: @item.Genre.Name</p>
-                        <div class="button-group">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning"> Edit</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                           @* <input asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger" onclick="return confirm('Do you want to delete?')" type="submit" value="Delete" class="btn btn-danger" />*@
-                            <a asp-action="addCart" asp-route-id="@item.Id" class="btn btn-primary">Add to cart</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-}
-else
-{    
-    <div class="row">
-        @foreach (var item in Model)
-        {
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <img class="card-img-top" src="@item.ImageUrl" alt="@item.Name">
-                    <div class="card-body">
-                        <h5 class="card-title">@item.Name</h5>
-                        <p class="card-text">Price: $@item.Price</p>
-                        <p class="card-text">Quantity: @item.Quantity</p>
-                        <p class="card-text">Genre: @item.Genre.Name</p>
-                        <div class="button-group">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
-                            <a asp-action="addCart" asp-route-id="@item.Id" class="btn btn-primary">Add to cart</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-}
 
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Create" class="btn mb-2">Add new Book</a>
+}
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <img class="card-img-top" src="@item.ImageUrl" alt="@item.Name">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Name</h5>
+                    <p class="card-text">Price: $@item.Price</p>
+                    <p class="card-text">Quantity: @item.Quantity</p>
+                    <p class="card-text">Genre: @item.Genre.Name</p>
+                    <div class="button-group">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn">Details</a>
+                        @if (User != null)
+                        {
+                            if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn">Delete</a>
+                            }
+                            <a asp-action="addCart" asp-route-id="@item.Id" class="btn">Add to cart</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

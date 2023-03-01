@@ -5,54 +5,12 @@
 @model ShoppingOnline.Models.Product
 
 @{
-    ViewData["Title"] = "Details";
-    var currentUser = await UserManager.GetUserAsync(User);
-    var isAdmin = await UserManager.IsInRoleAsync(currentUser, "Admin");
+    ViewData["Title"] = "Details";    
+
 }
-<style>
-    .product-details {
-        display: flex;
-        margin-bottom: 20px;
-    }
 
-    .product-image {
-        flex: 0 0 300px;
-        margin-right: 20px;
-    }
-
-    .product-info {
-        flex: 1;
-    }
-
-        .product-info h2 {
-            margin-top: 0;
-        }
-
-    .product-price {
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-
-    .product-quantity {
-        margin-bottom: 5px;
-    }
-
-    .product-genre {
-        margin-bottom: 20px;
-    }
-
-    .add-to-cart {
-        margin-top: 20px;
-    }
-
-
-    kground-color: #6c757d;
-}
-</style>
 
 <h1>Details</h1>
-@if(isAdmin)
-{
 <div class="product-details">
     <div class="product-image">
         <img src="@Model.ImageUrl" alt="@Model.Name" />
@@ -63,34 +21,21 @@
         <p class="product-price">Price: $@Model.Price</p>
         <p class="product-quantity">Quantity: @Model.Quantity</p>
         <p class="product-genre">Genre: @Model.Genre.Name</p>
-        <a asp-action="addCart" asp-route-id="@Model.Id" class="btn btn-primary">Add to cart</a>
+        <a asp-action="addCart" asp-route-id="@Model.Id" class="btn">Add to cart</a>
         
     </div>
 </div>
 
-<div class="product-actions">
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>
-}
-else
+
+@if (User != null)
 {
-    <div class="product-details">
-        <div class="product-image">
-            <img src="@Model.ImageUrl" alt="@Model.Name" />
+    if (User.IsInRole("Admin"))
+    {
+        
+        <div class="product-actions">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn">Edit</a>            
         </div>
-        <div class="product-info">
-            <h2>@Model.Name</h2>
-            <p>@Model.Description</p>
-            <p class="product-price">Price: $@Model.Price</p>
-            <p class="product-quantity">Quantity: @Model.Quantity</p>
-            <p class="product-genre">Genre: @Model.Genre.Name</p>
-            <a asp-action="addCart" asp-route-id="@Model.Id" class="btn btn-primary">Add to cart</a>
+    }
+    <a asp-action="Index" class="btn">Back to List</a>
+}
 
-        </div>
-    </div>
-
-    <div class="product-actions">       
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-  }
