@@ -214,13 +214,9 @@ namespace ShoppingOnline.Controllers
                         Quantity = 1
                     });
                 }
-                HttpContext.Session.SetString("cart", JsonConvert.SerializeObject(dataCart));
-                // var cart2 = HttpContext.Session.GetString("cart");//get key cart
-                //  return Json(cart2);
+                HttpContext.Session.SetString("cart", JsonConvert.SerializeObject(dataCart));                
             }
-
             return RedirectToAction(nameof(ListCart));
-
         }
 
         public IActionResult ListCart()
@@ -319,7 +315,6 @@ namespace ShoppingOnline.Controllers
                         _context.SaveChanges();
                         deleteCart(dataCart[i].Product.Id);
                     }
-
                 }
                 return RedirectToAction(nameof(ThankYou));
             }
